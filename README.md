@@ -23,9 +23,9 @@ The jar folder is to be used to store the built jar of your term-project.
 
 # Required Information when Submitting Tank Game
 
-## Version of Java Used:
+## Version of Java Used: "17.0.6" 2023-01-17 LTS
 
-## IDE used: 
+## IDE used: IntelliJ 2022.3.2
 
 ## Steps to Import project into IDE:
 
