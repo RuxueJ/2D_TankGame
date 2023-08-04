@@ -29,8 +29,15 @@ public class GameWorld extends JPanel implements Runnable {
     private final Launcher lf;
     private long tick = 0;
 
-    List<GameObject> gobjs = new ArrayList<>(500);
 
+
+    private boolean isCollide = false;
+
+    List<GameObject> gobjs = new ArrayList<>(800);
+
+//    Animation an = new Animation(300,300,ResourceManager.getAnimation("bullethit"));
+
+    List<Animation> anims = new ArrayList<>();
     /**
      *
      */
@@ -41,11 +48,14 @@ public class GameWorld extends JPanel implements Runnable {
     @Override
     public void run() {
         try {
+
+
             while (true) {
                 this.tick++;
-                this.t1.update(); // update tank
-                this.t2.update(); // update tank
+                this.t1.update(this); // update tank
+                this.t2.update(this); // update tank
                  this.checkCollision();
+               this.anims.forEach(animation -> animation.update());
 
                 this.repaint();   // redraw game
                 /*
@@ -63,16 +73,19 @@ public class GameWorld extends JPanel implements Runnable {
 
         for(int i = 0; i < this.gobjs.size(); i++){
 
-
             GameObject obj1 = this.gobjs.get(i);
-            if(obj1 instanceof Bullet || obj1 instanceof Tank){
+            if(obj1 instanceof Moveable){  // obj1 should be tank or bullet
                 for(int j = 0; j < this.gobjs.size(); j++){
                     if(i == j) continue;
                     GameObject obj2 = this.gobjs.get(j);
-//                System.out.println(this.gobjs.size());
                     if(obj1.getHitBox().intersects(obj2.getHitBox())){
-//                        System.out.println("hit");
-                        obj1.collides(obj2);
+
+                        System.out.println(obj1 + "hit" + obj2);
+                        ((Moveable)obj1).collide(obj2);
+                        isCollide = true;
+
+
+
                     }
 
                 }
@@ -138,14 +151,10 @@ public class GameWorld extends JPanel implements Runnable {
 
             int row = 0;
             String[] gameItems;
-//            int count = 0;
             while(mapReader.ready()){
                 gameItems = mapReader.readLine().strip().split(",");
                 for(int col = 0; col < gameItems.length; col++){
                     String gameObject = gameItems[col];
-//                    count++;
-//                    System.out.println(count + ": " + gameObject);
-//                    System.out.println("Before " + row + "Col: " + col);
                     if("0".equals(gameObject)){
                        continue;}
 
@@ -154,15 +163,22 @@ public class GameWorld extends JPanel implements Runnable {
                 row++;
 
             }
-//            System.out.println(this.gobjs.size());
+
         }catch (IOException e){
             throw new RuntimeException(e);
         }
 
-        t1 = new Tank(300, 300, 0, 0, (short) 0, ResourceManager.getSprite("tank1"));
+//        this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
+//        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
+//        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
+//        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
+//        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
+//        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
+        t1 = new Tank(300, 300, 0, 0, (short) 0, ResourceManager.getSprite("tank1"), this);
+
         TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
         this.lf.getJf().addKeyListener(tc1);
-        t2 = new Tank(800, 300, 0, 0, (short) 0, ResourceManager.getSprite("tank2"));
+        t2 = new Tank(300, 500, 0, 0, (short) 0, ResourceManager.getSprite("tank2"), this);
         TankControl tc2 = new TankControl(t2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_CONTROL);
         this.lf.getJf().addKeyListener(tc2);
         this.gobjs.add(t1);
@@ -180,7 +196,7 @@ public class GameWorld extends JPanel implements Runnable {
     }
 
     private void renderSplitScreen(Graphics2D g){
-//        BufferedImage lh = world.getSubimage((int)obj.getScreen_x(),(int)obj.getScreen_y(),GameConstants.GAME_SCREEN_WIDTH/2,GameConstants.GAME_SCREEN_HEIGHT);
+
         BufferedImage lh = world.getSubimage((int)t1.getScreen_x(),(int)t1.getScreen_y(),GameConstants.GAME_SCREEN_WIDTH/2,GameConstants.GAME_SCREEN_HEIGHT);
         BufferedImage rh = world.getSubimage((int)t2.getScreen_x(),(int)t2.getScreen_y(),GameConstants.GAME_SCREEN_WIDTH/2,GameConstants.GAME_SCREEN_HEIGHT);
 
@@ -197,14 +213,9 @@ public class GameWorld extends JPanel implements Runnable {
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
 
+        this.anims.forEach(animation -> animation.drawImage(buffer));
 
         g2.drawImage(world, 0, 0, null);
-//        BufferedImage mm = world.getSubimage(0,0,GameConstants.GAME_WORLD_WIDTH,GameConstants.GAME_WORLD_HEIGHT);
-//        g2. scale(.2,.2);
-//        g2.drawImage(mm,
-//                GameConstants.GAME_SCREEN_WIDTH*5/2 - GameConstants.GAME_WORLD_WIDTH/2,
-//                GameConstants.GAME_SCREEN_HEIGHT*5-GameConstants.GAME_WORLD_HEIGHT-180,
-//                null);
 
         renderSplitScreen(g2);
         renderMiniMap(g2);

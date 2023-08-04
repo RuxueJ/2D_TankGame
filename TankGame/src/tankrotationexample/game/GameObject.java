@@ -7,9 +7,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
  public class GameObject {
-    protected float x;
+
+     protected float x;
     protected float y;
-    protected BufferedImage img;
+    public float getX() {
+         return x;
+     }
+
+     public float getY() {
+         return y;
+     }
+
+     protected BufferedImage img;
     protected Rectangle hitBox;
     public GameObject(float x, float y, BufferedImage img){
         this.x = x;
@@ -41,6 +50,5 @@ import java.awt.image.BufferedImage;
 
     }
 
-     public void collides(GameObject obj2) {
-    }
+
 }

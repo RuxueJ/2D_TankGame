@@ -9,50 +9,62 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
  * @author anthony-pc
  */
-public class Tank extends GameObject{
+public class Tank extends GameObject implements Moveable{
 
     private float screen_x, screen_y;
     private float vx;
     private float vy;
     private float angle;
-    List<Bullet> ammo = new ArrayList<>();
+
     long timeSinceLastShot = 0L;
     long cooldown = 500;
+    GameWorld gw;
+List<Bullet>ammo = new ArrayList<>();
+    Random random = new Random();
+
+    private int id = random.nextInt(10);
+
+    public int getId() {
+        return id;
+    }
+
 
     private float R = 5;
     private float ROTATIONSPEED = 3.0f;
 
-    static ResourcePool<Bullet> bPool;
     private boolean UpPressed;
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
     private boolean ShootPressed;
-// static{
-//     bPool = new ResourcePool<>("bullet",300);
-//     bPool.fillPool(Bullet.class,300);
-// }
+
+    public int getBlood() {
+        return blood;
+    }
+    public void setBlood(int blood) {
+        this.blood = blood;
+    }
+    private int blood = GameConstants.TANK_FULL_LIFE;
+    private boolean islive = true;
 
 
-    Tank(float x, float y, float vx, float vy, float angle, BufferedImage img) {
+
+    Tank(float x, float y, float vx, float vy, float angle, BufferedImage img, GameWorld gw) {
         super(x,y,img);
         this.vx = vx; // may be deleted because of abstraction
         this.vy = vy; // may be deleted because of abstraction
         this.angle = angle; // may be deleted because of abstraction
+        this.gw = gw;
     }
 
     void setX(float x){ this.x = x; }
-    public float getX(){
-     return x;
-    }
-    public float getY(){
-        return y;
-    }
+    void setY(float y) { this. y = y;}
 
 
 
@@ -65,7 +77,7 @@ public class Tank extends GameObject{
         return screen_y;
     }
 
-    void setY(float y) { this. y = y;}
+
 
     void toggleUpPressed() {
         this.UpPressed = true;
@@ -96,15 +108,14 @@ public class Tank extends GameObject{
     void unToggleRightPressed() {
         this.RightPressed = false;
     }
-
-    void unToggleLeftPressed() {
+   void unToggleLeftPressed() {
         this.LeftPressed = false;
     }
 
     public void unToggleShootPressed() {
      this.ShootPressed = false;
     }
-    void update() {
+    void update(GameWorld gw) {
         if (this.UpPressed) {
             this.moveForwards();
         }
@@ -121,17 +132,19 @@ public class Tank extends GameObject{
             this.rotateRight();
         }
         if(this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())){
-//            b = bPool.getResource();
+
             this.timeSinceLastShot = System.currentTimeMillis();
 
-            this.ammo.add(new Bullet(x+25,y+25,angle, ResourceManager.getSprite("bullet")));
-
+            Bullet b = new Bullet(x+25,y+25,vx,vy, angle, ResourceManager.getSprite("bullet"),id, this.gw);
+            ammo.add(b);
+            gw.gobjs.add(b);
+            gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
         }
         this.ammo.forEach(bullet -> bullet.update());
         this.hitBox.setLocation((int)x,(int)y);
 
-
     }
+
 
     private void rotateLeft() {
         this.angle -= this.ROTATIONSPEED;
@@ -142,6 +155,7 @@ public class Tank extends GameObject{
     }
 
     private void moveBackwards() {
+
         vx =  Math.round(R * Math.cos(Math.toRadians(angle)));
         vy =  Math.round(R * Math.sin(Math.toRadians(angle)));
         x -= vx;
@@ -151,6 +165,7 @@ public class Tank extends GameObject{
     }
 
     private void moveForwards() {
+
         vx = Math.round(R * Math.cos(Math.toRadians(angle)));
         vy = Math.round(R * Math.sin(Math.toRadians(angle)));
         x += vx;
@@ -206,14 +221,12 @@ public class Tank extends GameObject{
         rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.img, rotation, null);
-//        g2d.setColor(Color.RED);
-        //g2d.rotate(Math.toRadians(angle), bounds.x + bounds.width/2, bounds.y + bounds.height/2);
         g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
-       this.ammo.forEach(b->b.drawImage(g2d));
+        this.ammo.forEach(bullet -> bullet.drawImage(g2d));
 
        g2d.setColor(Color.GREEN);
        g2d.drawRect((int)x,(int)y-20, 100,15);
-       long currentWidth = 100 - ((this.timeSinceLastShot + this.cooldown) - System.currentTimeMillis());
+       long currentWidth = this.blood;
        if(currentWidth > 100){
            currentWidth = 100;
        }
@@ -221,16 +234,35 @@ public class Tank extends GameObject{
 
     }
 
-    @Override
-    public void collides(GameObject obj2) {
-        if(obj2 instanceof Wall){
-            // stop
-        }else if(obj2 instanceof PowerUps){
-//            obj2.applyPowerUp(this);
 
+    @Override
+    public void collide(GameObject obj) {
+        System.out.println("hit");
+        if (obj instanceof Wall) {
+            if (UpPressed) {
+                this.x -= vx;
+                this.y -= vy;
+            }
+            if (DownPressed) {
+                this.x += vx;
+                this.y += vy;
+            }
+        }
+        if(obj instanceof PowerUps){
+            ((PowerUps) obj).applyPowerUp(this);
         }
 
     }
 
 
-}
+
+//        if(obj instanceof PowerUps){
+//            ((PowerUps) obj).applyPowerUp(this);
+//        }
+//        if(obj instanceof Wall){
+//            System.out.println("tank collides Wall");
+//
+//        }
+
+    }
+

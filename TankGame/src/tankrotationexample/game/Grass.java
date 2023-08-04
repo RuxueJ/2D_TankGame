@@ -7,8 +7,5 @@ public class Grass extends GameObject {
         super( x,  y,  grass);
     }
 
-    @Override
-    public void collides(GameObject obj2) {
 
-    }
 }

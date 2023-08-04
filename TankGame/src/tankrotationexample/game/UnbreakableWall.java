@@ -7,8 +7,5 @@ public class UnbreakableWall extends Wall {
         super(x,y,unbreak);
     }
 
-    @Override
-    public void collides(GameObject obj2) {
 
-    }
 }
