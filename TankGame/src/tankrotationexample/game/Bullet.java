@@ -1,33 +1,33 @@
 package tankrotationexample.game;
 
 import tankrotationexample.GameConstants;
+import tankrotationexample.Resources.ResourceManager;
 import tankrotationexample.Resources.ResourcePool;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class Bullet extends GameObject implements Moveable{
+public abstract class Bullet extends GameObject implements Moveable{
 
     private float vx;
     private float vy;
-    private float angle;
+    float angle;
     private float R = 5;
     private int id;
-    GameWorld gw;
 
-    boolean isCollide = false;
-
+    private Animation bullethit;
 
 
 
-    Bullet(float x, float y, float vx, float vy, float angle, BufferedImage img,int ID, GameWorld gw) {
+
+    Bullet(float x, float y, float vx, float vy, float angle, BufferedImage img,int ID) {
         super(x,y,img);
         this.vx = vx; // may be deleted because of abstraction
         this.vy = vy; // may be deleted because of abstraction
         this.angle = angle; // may be deleted because of abstraction
         this.id = ID;
-        this.gw = gw;
+
     }
 
 
@@ -37,66 +37,51 @@ public class Bullet extends GameObject implements Moveable{
         vy = Math.round(R * Math.sin(Math.toRadians(angle)));
         x += vx;
         y += vy;
-        checkBorder();
         this.hitBox.setLocation((int)x,(int)y);
+        if(bullethit!=null){
+            bullethit.update();
+        }
 
     }
 
-
-    private void checkBorder() {
-        if (x < 30) {
-            x = 30;
-        }
-        if (x >= GameConstants.GAME_WORLD_WIDTH - 80) {
-            x = GameConstants.GAME_WORLD_WIDTH - 80;
-        }
-        if (y < 40) {
-            y = 40;
-        }
-        if (y >= GameConstants.GAME_WORLD_HEIGHT - 80) {
-            y = GameConstants.GAME_WORLD_HEIGHT - 80;
-        }
-    }
 
     @Override
     public String toString() {
         return "x=" + x + ", y=" + y + ", angle=" + angle;
     }
 
-
     @Override
-    public void drawImage(Graphics g) {  // graphic object that you mean in the memory
-        if(!isCollide){
+    public void drawImage(Graphics g){
+        Graphics2D g2d = (Graphics2D) g;
+        if(!ifHasDestroyed()){
             AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
-            rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
-            Graphics2D g2d = (Graphics2D) g;
+            rotation.rotate(Math.toRadians(this.angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
+
             g2d.drawImage(this.img, rotation, null);
-            g2d.setColor(Color.RED);
-            //g2d.rotate(Math.toRadians(angle), bounds.x + bounds.width/2, bounds.y + bounds.height/2);
-            g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
 
         }
-
-    }
-
+        if(bullethit!=null){
+            bullethit.drawImage(g2d);
+        }
+    }; // graphic object that you mean in the memory
 
 
     @Override
     public void collide(GameObject obj) {
 
-
-
         if (obj instanceof Tank && (((Tank) obj).getId() != this.id)) {
-            ((Tank) obj).setBlood(((Tank) obj).getBlood() - 20);
-            System.out.println("bullet hit tank!");
-            isCollide = true;
+            ((Tank) obj).setBlood(((Tank) obj).getBlood() - 10);
+            ((Tank) obj).checkCondition();
+
+
+            this.setHasDestroyed(true);
         }
         if (obj instanceof Wall) {
-            isCollide = true;
 
+            ((Wall)obj).collides();
+            this.setHasDestroyed(true);
         }
-
-        this.gw.gobjs.remove(this);
+        bullethit = new Animation(x,y, ResourceManager.getAnimation("bullethit"));
 
 
     }

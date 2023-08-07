@@ -1,5 +1,7 @@
 package tankrotationexample.game;
 
+import tankrotationexample.game.Tank;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -14,6 +16,7 @@ public class TankControl implements KeyListener {
     private  int right;
     private  int left;
     private  int shoot;
+
     
     public TankControl(Tank t1, int up, int down, int left, int right, int shoot) {
         this.tank = t1;
@@ -47,6 +50,7 @@ public class TankControl implements KeyListener {
         if(keyPressed == shoot){
             this.tank.toggleShootPressed();
         }
+
     }
 
     @Override

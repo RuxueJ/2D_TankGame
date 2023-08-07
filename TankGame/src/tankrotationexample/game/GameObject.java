@@ -3,10 +3,9 @@ package tankrotationexample.game;
 import tankrotationexample.Resources.ResourceManager;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
- public class GameObject {
+ public abstract class GameObject {
 
      protected float x;
     protected float y;
@@ -16,6 +15,16 @@ import java.awt.image.BufferedImage;
 
      public float getY() {
          return y;
+     }
+
+
+     private boolean hasDestroyed = false;
+
+     public boolean ifHasDestroyed() {
+         return hasDestroyed;
+     }
+     public void setHasDestroyed(boolean hasCollide) {
+         this.hasDestroyed = hasCollide;
      }
 
      protected BufferedImage img;
@@ -32,23 +41,20 @@ import java.awt.image.BufferedImage;
     public static GameObject newInstance(String type, float x, float y)throws UnsupportedOperationException{
 
         return switch (type){
-            case "2" -> new BreakableWall(x, y, ResourceManager.getSprite("break"));
-            case "3","9" -> new UnbreakableWall(x, y, ResourceManager.getSprite("unbreak"));
+            case "1" -> new BreakableWall01(x, y, ResourceManager.getSprite("break1"));
+            case "2" -> new BreakableWall02(x, y, ResourceManager.getSprite("break2"));
+            case "3"-> new River(x, y, ResourceManager.getSprite("river"));
             case "4" -> new Grass(x, y, ResourceManager.getSprite("grass"));
-            case "5" -> new River(x, y, ResourceManager.getSprite("river"));
-            case "6" -> new Shield(x, y, ResourceManager.getSprite("shield"));
-            case "7" -> new Speed(x, y, ResourceManager.getSprite("speed"));
-            case "8" -> new Health(x, y, ResourceManager.getSprite("health"));
+            case "5" -> new Tranform(x, y, ResourceManager.getSprite("rocket"));
+            case "6" -> new BloodSupply(x, y, ResourceManager.getSprite("bloodsupply"));
+            case "7" -> new BulletSupply(x, y, ResourceManager.getSprite("bulletsupply"));
+            case "8" -> new Invisibility(x, y, ResourceManager.getSprite("invisibility"));
+            case "9" -> new UnbreakableWall(x, y, ResourceManager.getSprite("unbreak"));
             default -> throw new IllegalArgumentException("type" + type);
         };
     }
 
-    public void drawImage(Graphics buffer) {
-
-        buffer.drawImage( this.img,(int)x,(int)y, null);
-
-
-    }
+    abstract public void drawImage(Graphics buffer);
 
 
 }

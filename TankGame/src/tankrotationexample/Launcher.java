@@ -1,8 +1,9 @@
 package tankrotationexample;
 
 import tankrotationexample.Resources.ResourceManager;
-import tankrotationexample.game.GameWorld;
+import tankrotationexample.menus.GameWorld;
 import tankrotationexample.menus.EndGamePanel;
+import tankrotationexample.menus.PauseGamePanel;
 import tankrotationexample.menus.StartMenuPanel;
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +36,7 @@ public class Launcher {
      * used for our game. It will be attached to the main panel.
      */
     private CardLayout cl;
+    private  Thread gameThread;
 
     public Launcher(){
         this.jf = new JFrame();             // creating a new JFrame object
@@ -43,25 +45,37 @@ public class Launcher {
         this.jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    public GameWorld getGamePanel() {
+        return gamePanel;
+    }
+
     private void initUIComponents(){
         this.mainPanel = new JPanel(); // create a new main panel
         /*
          * start panel will be used to view the start menu. It will contain
          * two buttons start and exit.
          */
-        JPanel startPanel = new StartMenuPanel(this); // create a new start panel
+
         this.gamePanel = new GameWorld(this); // create a new game panel
         this.gamePanel.InitializeGame(); // initialize game, but DO NOT start game
         /*
          * end panel is used to show the end game panel.  it will contain
          * two buttons restart and exit.
          */
-        JPanel endPanel = new EndGamePanel(this); // create a new end game pane;
+        JPanel startPanel = new StartMenuPanel(this); // create a new start panel
+        JPanel endPanel = new EndGamePanel(this, this.getGamePanel().getWinnerMessage()); // create a new end game pane;
+
+        System.out.println("Launcher:" + this.gamePanel.getWinnerMessage());
+        JPanel pausePanel = new PauseGamePanel(this); // create a new pause panel
+
+
         cl = new CardLayout(); // creating a new CardLayout Panel
         this.mainPanel.setLayout(cl); // set the layout of the main panel to our card layout
         this.mainPanel.add(startPanel, "start"); //add the start panel to the main panel
         this.mainPanel.add(gamePanel, "game");   //add the game panel to the main panel
         this.mainPanel.add(endPanel, "end");    // add the end game panel to the main panel
+        this.mainPanel.add(pausePanel, "pause"); // add the pause game panel to the main panel
+
         this.jf.add(mainPanel); // add the main panel to the JFrame
         this.jf.setResizable(false); //make the JFrame not resizable
         this.setFrame("start"); // set the current panel to start panel
@@ -79,6 +93,11 @@ public class Launcher {
                 //start a new thread for the game to run. This will ensure our JFrame is responsive and
                 // not stuck executing the game loop.
                 (new Thread(this.gamePanel)).start();
+
+            }
+
+            case "pause" ->{
+                this.jf.setSize(GameConstants.PAUSE_SCREEN_WIDTH, GameConstants.PAUSE_SCREEN_HEIGHT);
             }
             case "end" ->
                 // set the size of the jFrame to the expected size for the end panel

@@ -14,6 +14,7 @@ public class Animation {
     private int currentFrame = 0;
     private boolean isRunning = false;
     public static List<BufferedImage> getAnimation(String type){
+
         return ResourceManager.getAnimation(type);
     }
 
@@ -40,7 +41,6 @@ public class Animation {
         if(timeSinceUpdate + delay < System.currentTimeMillis()){
             this.timeSinceUpdate = System.currentTimeMillis();
             this.currentFrame++;
-//            this.currentFrame = (currentFrame + 1) % this.frames.size();
             if(this.currentFrame == frames.size()){
                 isRunning = false;
             }

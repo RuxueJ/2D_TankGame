@@ -23,28 +23,32 @@ public class ResourceManager {
 
     }};
 
+
+
     private static BufferedImage loadSprite(String path) throws IOException {
         return ImageIO.read(ResourceManager.class.getClassLoader().getResource(path));
     }
-
-
     private static void initSprites(){
         try {
             ResourceManager.sprites.put("tank1",loadSprite("tank/tank1.png"));
             ResourceManager.sprites.put("tank2",loadSprite("tank/tank2.png"));
             ResourceManager.sprites.put("bullet",loadSprite("bullet/bullet.jpg"));
+            ResourceManager.sprites.put("bigBullet",loadSprite("bullet/bigBullet.png"));
             ResourceManager.sprites.put("menu",loadSprite("menu/title.png"));
-            ResourceManager.sprites.put("unbreak",loadSprite("walls/unbreak.jpg"));
-            ResourceManager.sprites.put("break",loadSprite("walls/break2.jpg"));
+            ResourceManager.sprites.put("unbreak",loadSprite("walls/greatWall.png"));
+            ResourceManager.sprites.put("break1",loadSprite("walls/break2.jpg"));
+            ResourceManager.sprites.put("break2",loadSprite("walls/break1.jpg"));
             ResourceManager.sprites.put("river",loadSprite("floor/river.png"));
             ResourceManager.sprites.put("grass",loadSprite("floor/grass.png"));
-            ResourceManager.sprites.put("health",loadSprite("powerups/health.png"));
-            ResourceManager.sprites.put("shield",loadSprite("powerups/shield.png"));
-            ResourceManager.sprites.put("speed",loadSprite("powerups/speed.png"));
+            ResourceManager.sprites.put("invisibility",loadSprite("powerups/invisibility.png"));
+            ResourceManager.sprites.put("bulletsupply",loadSprite("powerups/bulletsupply.png"));
+            ResourceManager.sprites.put("bloodsupply",loadSprite("powerups/bloodsupply.png"));
+            ResourceManager.sprites.put("rocket",loadSprite("powerups/rocket.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         };
     }
+
 
     private static void initAnimations(){
         String baseName = "animations/%s/%s_%04d.png";
@@ -66,6 +70,40 @@ public class ResourceManager {
         });
     }
 
+
+    private static Sound loadSound(String path) throws UnsupportedOperationException, IOException, LineUnavailableException, UnsupportedAudioFileException {
+        AudioInputStream ais = AudioSystem.getAudioInputStream(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResource(path)));
+        Clip c = AudioSystem.getClip();
+        c.open(ais);
+        Sound s = new Sound(c);
+        s.setVolume(.2f);
+        return s;
+    }
+    private static void initSound(){
+        try{
+            ResourceManager.sounds.put("bullet",loadSound("sounds/bullet.wav"));
+            ResourceManager.sounds.put("start",loadSound("sounds/stage_start.wav"));
+            ResourceManager.sounds.put("bullet_shoot",loadSound("sounds/bullet_shoot.wav"));
+            ResourceManager.sounds.put("explosion",loadSound("sounds/explosion.wav"));
+            ResourceManager.sounds.put("bg",loadSound("sounds/Music.mid"));
+            ResourceManager.sounds.put("pickup",loadSound("sounds/pickup.wav"));
+            ResourceManager.sounds.put("shotfire",loadSound("sounds/shotexplosion.wav"));
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+
+    }
+
+
+
+    public static BufferedImage getSprite(String type) {
+        if(!ResourceManager.sprites.containsKey(type)){
+            throw new RuntimeException("%s is missing from spirite resources".formatted(type));
+        }
+
+        return ResourceManager.sprites.get(type);
+    }
     public static List<BufferedImage> getAnimation(String type){
         if(!ResourceManager.animations.containsKey(type)){
             throw new RuntimeException("%s is missing from animation resources".formatted(type));
@@ -79,36 +117,21 @@ public class ResourceManager {
         return ResourceManager.sounds.get(type);
     }
 
-    private static Sound loadSound(String path) throws UnsupportedOperationException, IOException, LineUnavailableException, UnsupportedAudioFileException {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResource(path)));
-        Clip c = AudioSystem.getClip();
-        c.open(ais);
-        Sound s = new Sound(c);
-        s.setVolume(1f);
-        return s;
-    }
-    private static void initSound(){
-        ResourceManager.sounds.put("bullet_shoot",loadSound("sounds/bullet_shoot"));
-    }
 
     public static void loadResouces(){
         ResourceManager.initSprites();
         ResourceManager.initAnimations();
+        ResourceManager.initSound();
     }
 
-
-    public static BufferedImage getSprite(String type) {
-        if(!ResourceManager.sprites.containsKey(type)){
-            throw new RuntimeException("%s is missing from spirite resources".formatted(type));
-        }
-
-        return ResourceManager.sprites.get(type);
-    }
-
-    public static void main(String[] args) {
-//        ResourcePool<Bullet> bPool = new ResourcePool<>("bullet",300);
-//        bPool.fillPool(Bullet.class,300);
-        ResourceManager.loadResouces();
-//        System.out.println();
-    }
+//    public static void main(String[] args) {
+//
+//        ResourceManager.loadResouces();
+//        Sound bg = ResourceManager.getSound("bg");
+//        bg.setLooping();
+//        bg.playSound();
+//        while(true){
+//
+//        }
+//        }
 }
