@@ -31,16 +31,16 @@ The jar folder is to be used to store the built jar of your term-project.
 
 ## Steps to Build your Project:
  
-## Steps to run your Project:
+## Steps to run your Project: java -jar CSC413_TermProject in terminal or click run in Launcher class.
 
 ## Controls to play your Game:
 
 |               | Player 1 | Player 2 |
 |---------------|----------|----------|
-|  Forward      |          |          |
-|  Backward     |          |          |
-|  Rotate left  |          |          |
-|  Rotate Right |          |          |
-|  Shoot        |          |          |
+|  Forward      |    W     |   UP     |
+|  Backward     |    S     |   DOWN   |
+|  Rotate left  |    A     |   LEFT   |
+|  Rotate Right |    D     |   RIGHT  |
+|  Shoot        |   SPACE  |  CONTROL |
 
 <!-- you may add more controls if you need to. -->
