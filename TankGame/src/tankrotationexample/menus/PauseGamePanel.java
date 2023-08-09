@@ -25,4 +25,9 @@ public class PauseGamePanel extends Screen{
         this.add(resume);
         this.add(exit);
     }
+
+    @Override
+    public void paintComponent(Graphics g) {
+
+    }
 }

@@ -31,12 +31,18 @@ public class Launcher {
      * listeners to this JFrame.
      */
     private final JFrame jf;
+    private EndGamePanel endPanel;
     /*
      * CardLayout is used to manage our sub-panels. This is a layout manager
      * used for our game. It will be attached to the main panel.
      */
     private CardLayout cl;
-    private  Thread gameThread;
+
+    private int winner;
+
+    public void setWinnerMessage(int winner) {
+        this.winner = winner;
+    }
 
     public Launcher(){
         this.jf = new JFrame();             // creating a new JFrame object
@@ -45,8 +51,9 @@ public class Launcher {
         this.jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public GameWorld getGamePanel() {
-        return gamePanel;
+
+    public EndGamePanel getEndPanel() {
+        return endPanel;
     }
 
     private void initUIComponents(){
@@ -63,9 +70,11 @@ public class Launcher {
          * two buttons restart and exit.
          */
         JPanel startPanel = new StartMenuPanel(this); // create a new start panel
-        JPanel endPanel = new EndGamePanel(this, this.getGamePanel().getWinnerMessage()); // create a new end game pane;
+        endPanel = new EndGamePanel(this); // create a new end game pane;
 
-        System.out.println("Launcher:" + this.gamePanel.getWinnerMessage());
+
+
+
         JPanel pausePanel = new PauseGamePanel(this); // create a new pause panel
 
 
@@ -101,7 +110,10 @@ public class Launcher {
             }
             case "end" ->
                 // set the size of the jFrame to the expected size for the end panel
-                    this.jf.setSize(GameConstants.END_MENU_SCREEN_WIDTH, GameConstants.END_MENU_SCREEN_HEIGHT);
+            {this.jf.setSize(GameConstants.END_MENU_SCREEN_WIDTH, GameConstants.END_MENU_SCREEN_HEIGHT);
+            this.getEndPanel().setWinner(this.winner);
+            }
+
         }
         this.cl.show(mainPanel, type); // change current panel shown on main panel tp the panel denoted by type.
         this.jf.setVisible(true); // show the JFrame

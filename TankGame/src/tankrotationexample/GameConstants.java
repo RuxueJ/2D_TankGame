@@ -24,6 +24,5 @@ public class GameConstants {
     public static final int TANK2_ORIGINAL_POSITION_X = 1600;
     public static final int TANK2_ORIGINAL_POSITION_Y = 800;
 
-    public static final long TANK_COOLDOWN = 500;
 
 }

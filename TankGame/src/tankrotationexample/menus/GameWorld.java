@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author anthony-pc
@@ -27,14 +28,16 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
   private boolean GameRunning = true;
 
     private BufferedImage world;
+
+    public void setGameRunning(boolean gameRunning) {
+        GameRunning = gameRunning;
+    }
+
     private Tank t1;
     private Tank t2;
 
-    private String winnerMessage;
+    private int winner;
 
-    public String getWinnerMessage() {
-        return winnerMessage;
-    }
 
     private final Launcher lf;
     private long tick = 0;
@@ -58,27 +61,23 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
      */
     public GameWorld(Launcher lf) {
 
-
-
         this.lf = lf;
-//        addKeyListener(this);
-//        setFocusable(true);
 
     }
 
     @Override
     public void run() {
+
         this.resetGame();
+
+//        this.playStartSoundAndWait();
+//        System.out.println("play start sound and wait function ends");
+//        this.playBgSound();
+//        System.out.println("play bg sound function ends");
         ResourceManager.getSound("start").playSound();
         bg.setLooping();
         bg.playSound();
         try {
-
-//            if(GameRunning){
-//                synchronized (this){
-//                    wait();
-//                }
-//            }
 
 
             while (this.t1.isIslive() && this.t2.isIslive()) {
@@ -98,9 +97,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
                 */
                 Thread.sleep(1000 / 144);
             }
-            winnerMessage = this.t1.isIslive() ? "Red Tank Won!" : "Blue Tank Won!";
-            System.out.println("GameWorld: " + winnerMessage);
-
+            setWinnerMessage();
 
 
             this.lf.setFrame("end");
@@ -109,8 +106,14 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
         }
     }
 
-    private void checkCollision() {
 
+    private void setWinnerMessage(){
+        winner = this.t1.isIslive() ? 1 : 2;
+        this.lf.setWinnerMessage(winner);
+        this.setGameRunning(false);
+    }
+
+    private void checkCollision() {
 
         for(int i = 0; i < this.gobjs.size(); i++){
 
@@ -135,23 +138,35 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
      */
     public void resetGame() {
         this.tick = 0;
-        this.t1.setX(GameConstants.TANK1_ORIGINAL_POSITION_X);
-        this.t1.setY(GameConstants.TANK2_ORIGINAL_POSITION_Y);
-        this.t2.setX(GameConstants.TANK2_ORIGINAL_POSITION_X);
-        this.t2.setY(GameConstants.TANK2_ORIGINAL_POSITION_Y);
-        this.t1.setIslive(true);
-        this.t2.setIslive(true);
-        this.t1.setBulletNumber(GameConstants.TANK_FULL_BULLET);
-        this.t2.setBulletNumber(GameConstants.TANK_FULL_BULLET);
-        this.t1.setBlood(GameConstants.TANK_FULL_BLOOD);
-        this.t2.setBlood(GameConstants.TANK_FULL_BLOOD);
-        this.t1.setLifeCount(GameConstants.TANk_LIFE_COUNT);
-        this.t2.setLifeCount(GameConstants.TANk_LIFE_COUNT);
-        this.t1.setCooldown(GameConstants.TANK_COOLDOWN);
-        this.t2.setCooldown(GameConstants.TANK_COOLDOWN);
-        this.t1.setTransformed(false);
-        this.t2.setTransformed(false);
+        this.gobjs.clear();
+        InitializeGame();
+
     }
+//    public void playStartSoundAndWait(){
+//        Sound startSound = ResourceManager.getSound("start");
+//        System.out.println("function playStartSoundAndWait");
+//        CountDownLatch latch = new CountDownLatch(1);
+//
+//        Thread startSoundThread = new Thread(()->{
+//            startSound.playSound();
+//            startSound.waitUntilFinished(); // Wait until the "start" sound finishes playing
+//            latch.countDown();
+//        });
+//        startSoundThread.start();
+//        try {
+//            latch.await(); // Wait until the latch is released (sound finishes)
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
+//    private void playBgSound(){
+//        System.out.println("playing bg sound");
+//        Sound bgSound = ResourceManager.getSound("bg");
+//        bg.setLooping();
+//        bg.playSound();
+//    }
 
     /**
      * Load all resources for Tank Wars Game. Set all Game Objects to their
@@ -164,7 +179,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
      * 2: breakable wall 2
      * 3: river
      * 4 grass
-     * 5: rocket
+     * 5: rocket bullet
      * 6: bloodsupply
      * 7: bulletsupply
      * 8: invisibility
@@ -194,8 +209,8 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
                 BufferedImage.TYPE_INT_RGB);
 
        this.loadMap("maps/map4.csv");
-//
-//        this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
+
+////      this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
 //        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
 //        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
 //        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
@@ -257,7 +272,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
 
         renderSplitScreen(g2);
         renderMiniMap(g2);
-    }
+       }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -266,17 +281,17 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if(keyCode == KeyEvent.VK_F9){
-            if(GameRunning){
-
-               GameRunning = false;
-               notify();
-            }else{
-                this.GameRunning = true;
-                this.lf.setFrame("pause");
-            }
-        }
+//        int keyCode = e.getKeyCode();
+//        if(keyCode == KeyEvent.VK_F9){
+//            if(GameRunning){
+//
+//               GameRunning = false;
+//               notify();
+//            }else{
+//                this.GameRunning = true;
+//                this.lf.setFrame("pause");
+//            }
+//        }
 
     }
 

@@ -108,16 +108,13 @@ public class Tank extends GameObject implements Moveable{
         this.bulletNumber = bulletNumber;
     }
 
-    public void setIslive(boolean islive) {
-        this.islive = islive;
-    }
 
+
+    private boolean islive = true;
     public boolean isIslive() {
         return islive;
     }
 
-
-    private boolean islive = true;
 
     private Animation powerpick ;
 

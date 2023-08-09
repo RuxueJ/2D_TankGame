@@ -2,9 +2,12 @@ package tankrotationexample.game;
 
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import java.util.concurrent.CountDownLatch;
 
 public class Sound {
     private Clip sound;
+
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     public Sound(Clip sound) {
         this.sound = sound;
@@ -34,4 +37,12 @@ public class Sound {
     }
 
 
+    public void waitUntilFinished() {
+        try {
+            latch.await(); // Wait until latch is released (sound finishes)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

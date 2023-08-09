@@ -14,8 +14,8 @@ public class BreakableWall02 extends Wall{
     }
 
 
-    @Override
-    public void collides() {
+
+    public void collide() {
         this.health --;
         if(this.health == 1){
             this.img = ResourceManager.getSprite("break1");

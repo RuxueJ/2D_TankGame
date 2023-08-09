@@ -54,6 +54,7 @@ import java.awt.image.BufferedImage;
         };
     }
 
+
     abstract public void drawImage(Graphics buffer);
 
 

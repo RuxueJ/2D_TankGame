@@ -10,7 +10,7 @@ public class UnbreakableWall extends Wall {
     }
 
     @Override
-    public void collides() {
+    public void collide() {
 
     }
 

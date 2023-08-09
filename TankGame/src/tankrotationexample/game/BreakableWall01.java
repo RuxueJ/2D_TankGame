@@ -12,7 +12,7 @@ public class BreakableWall01 extends Wall {
     }
 
     @Override
-    public void collides() {
+    public void collide() {
         this.setHasDestroyed(true);
         ResourceManager.getSound("shotfire").playSound();
 

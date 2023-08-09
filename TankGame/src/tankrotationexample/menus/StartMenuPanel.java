@@ -36,5 +36,9 @@ public class StartMenuPanel extends Screen {
         this.add(mode2);
         this.add(exit);
     }
+    public void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.drawImage(this.menuBackground, 0, 0, null);
+    }
 
 }

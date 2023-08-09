@@ -70,6 +70,7 @@ public abstract class Bullet extends GameObject implements Moveable{
     public void collide(GameObject obj) {
 
         if (obj instanceof Tank && (((Tank) obj).getId() != this.id)) {
+            System.out.println("bullet hit tank!");
             ((Tank) obj).setBlood(((Tank) obj).getBlood() - 10);
             ((Tank) obj).checkCondition();
 
@@ -78,7 +79,7 @@ public abstract class Bullet extends GameObject implements Moveable{
         }
         if (obj instanceof Wall) {
 
-            ((Wall)obj).collides();
+            ((Wall)obj).collide();
             this.setHasDestroyed(true);
         }
         bullethit = new Animation(x,y, ResourceManager.getAnimation("bullethit"));

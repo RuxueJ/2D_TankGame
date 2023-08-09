@@ -17,8 +17,5 @@ abstract public class Screen extends JPanel {
         this.setLayout(null);
     }
 
-    public void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(this.menuBackground, 0, 0, null);
-    }
+    abstract public void paintComponent(Graphics g);
 }

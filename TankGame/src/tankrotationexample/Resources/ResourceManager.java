@@ -28,6 +28,7 @@ public class ResourceManager {
     private static BufferedImage loadSprite(String path) throws IOException {
         return ImageIO.read(ResourceManager.class.getClassLoader().getResource(path));
     }
+
     private static void initSprites(){
         try {
             ResourceManager.sprites.put("tank1",loadSprite("tank/tank1.png"));
@@ -48,7 +49,6 @@ public class ResourceManager {
             throw new RuntimeException(e);
         };
     }
-
 
     private static void initAnimations(){
         String baseName = "animations/%s/%s_%04d.png";
@@ -79,6 +79,7 @@ public class ResourceManager {
         s.setVolume(.2f);
         return s;
     }
+
     private static void initSound(){
         try{
             ResourceManager.sounds.put("bullet",loadSound("sounds/bullet.wav"));
