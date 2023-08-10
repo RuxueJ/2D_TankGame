@@ -15,7 +15,7 @@ public class StartMenuPanel extends Screen {
     public StartMenuPanel(Launcher lf) {
         super(lf);
 
-        this.menuBackground = ResourceManager.getSprite("menu");
+        this.bgImage = ResourceManager.getSprite("menu");
 
         JButton mode1= new JButton("1 VS 1");
         mode1.setFont(new Font("Courier New", Font.BOLD, 24));
@@ -38,7 +38,7 @@ public class StartMenuPanel extends Screen {
     }
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(this.menuBackground, 0, 0, null);
+        g2.drawImage(this.bgImage, 0, 0, null);
     }
 
 }

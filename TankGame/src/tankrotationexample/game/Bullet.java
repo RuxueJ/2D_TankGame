@@ -1,8 +1,6 @@
 package tankrotationexample.game;
 
-import tankrotationexample.GameConstants;
 import tankrotationexample.Resources.ResourceManager;
-import tankrotationexample.Resources.ResourcePool;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

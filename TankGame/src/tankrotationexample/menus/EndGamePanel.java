@@ -22,7 +22,7 @@ public class EndGamePanel extends Screen {
     public EndGamePanel(Launcher lf) {
         super(lf);
 
-        this.menuBackground = ResourceManager.getSprite("menu");
+        this.bgImage = ResourceManager.getSprite("menu");
 
         JButton start = new JButton("Restart Game");
         start.setFont(new Font("Courier New", Font.BOLD, 24));
@@ -46,7 +46,7 @@ public class EndGamePanel extends Screen {
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.drawImage(this.menuBackground, 0, 0, null);
+        g2.drawImage(this.bgImage, 0, 0, null);
 
 
         Font font = new Font("Courier New", Font.BOLD, 24);

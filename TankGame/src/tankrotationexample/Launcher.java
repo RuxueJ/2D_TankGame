@@ -1,7 +1,6 @@
 package tankrotationexample;
 
 import tankrotationexample.Resources.ResourceManager;
-import tankrotationexample.menus.GameWorld;
 import tankrotationexample.menus.EndGamePanel;
 import tankrotationexample.menus.PauseGamePanel;
 import tankrotationexample.menus.StartMenuPanel;

@@ -1,6 +1,5 @@
 package tankrotationexample.Resources;
 
-import tankrotationexample.game.Bullet;
 import tankrotationexample.game.Sound;
 
 import javax.imageio.ImageIO;

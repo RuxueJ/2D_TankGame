@@ -1,9 +1,7 @@
-package tankrotationexample.menus;
+package tankrotationexample;
 
 
 import tankrotationexample.game.TankControl;
-import tankrotationexample.GameConstants;
-import tankrotationexample.Launcher;
 import tankrotationexample.Resources.ResourceManager;
 import tankrotationexample.game.*;
 
@@ -18,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+
 
 /**
  * @author anthony-pc
@@ -40,6 +38,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
 
 
     private final Launcher lf;
+
     private long tick = 0;
 
     Sound bg = ResourceManager.getSound("bg");
@@ -51,11 +50,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
         return gobjs;
     }
 
-    public List<Animation> getAnims() {
-        return anims;
-    }
 
-    private List<Animation> anims = new ArrayList<>();
     /**
      *
      */
@@ -70,10 +65,6 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
 
         this.resetGame();
 
-//        this.playStartSoundAndWait();
-//        System.out.println("play start sound and wait function ends");
-//        this.playBgSound();
-//        System.out.println("play bg sound function ends");
         ResourceManager.getSound("start").playSound();
         bg.setLooping();
         bg.playSound();
@@ -86,7 +77,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
                 this.t1.update(this); // update tank
                 this.t2.update(this); // update tank
 
-                this.anims.forEach(animation -> animation.update());
+
                 this.checkCollision();
                 this.gobjs.removeIf(gameObject -> gameObject.ifHasDestroyed());
 
@@ -142,31 +133,7 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
         InitializeGame();
 
     }
-//    public void playStartSoundAndWait(){
-//        Sound startSound = ResourceManager.getSound("start");
-//        System.out.println("function playStartSoundAndWait");
-//        CountDownLatch latch = new CountDownLatch(1);
-//
-//        Thread startSoundThread = new Thread(()->{
-//            startSound.playSound();
-//            startSound.waitUntilFinished(); // Wait until the "start" sound finishes playing
-//            latch.countDown();
-//        });
-//        startSoundThread.start();
-//        try {
-//            latch.await(); // Wait until the latch is released (sound finishes)
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//    }
-//    private void playBgSound(){
-//        System.out.println("playing bg sound");
-//        Sound bgSound = ResourceManager.getSound("bg");
-//        bg.setLooping();
-//        bg.playSound();
-//    }
+
 
     /**
      * Load all resources for Tank Wars Game. Set all Game Objects to their
@@ -210,12 +177,6 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
 
        this.loadMap("maps/map4.csv");
 
-////      this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
-//        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
-//        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
-//        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
-//        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
-//        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
         t1 = new Tank(GameConstants.TANK1_ORIGINAL_POSITION_X,
                 GameConstants.TANK1_ORIGINAL_POSITION_Y,
                 0,
@@ -265,8 +226,6 @@ public class GameWorld extends JPanel implements Runnable, KeyListener {
         List<GameObject> copyOfGobjs = new ArrayList<>(this.gobjs);
         copyOfGobjs.forEach(gameObject -> gameObject.drawImage(buffer));
 
-
-        this.anims.forEach(animation -> animation.drawImage(buffer));
 
         g2.drawImage(world, 0, 0, null);
 

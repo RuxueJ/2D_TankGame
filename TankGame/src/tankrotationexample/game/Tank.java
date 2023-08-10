@@ -2,7 +2,7 @@ package tankrotationexample.game;
 
 import tankrotationexample.GameConstants;
 import tankrotationexample.Resources.ResourceManager;
-import tankrotationexample.menus.GameWorld;
+import tankrotationexample.GameWorld;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -32,6 +32,7 @@ public class Tank extends GameObject implements Moveable{
     List<Bullet>ammo = new ArrayList<>();
     Random random = new Random();
     private int id = random.nextInt(10);
+    private Animation bulletShoot;
 
     public void setCooldown(long cooldown) {
         this.cooldown = cooldown;
@@ -208,7 +209,9 @@ public class Tank extends GameObject implements Moveable{
             ammo.add(b);
             System.out.println("ammo list size: " + ammo.size());
             gw.getGobjs().add(b);
-            gw.getAnims().add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
+            bulletShoot = new Animation(x,y,ResourceManager.getAnimation("bulletshoot"));
+            bulletShoot.update();
+//            gw.getAnims().add();
             ResourceManager.getSound("bullet").playSound();
         }
         this.ammo.forEach(bullet -> bullet.update());
@@ -289,11 +292,11 @@ public class Tank extends GameObject implements Moveable{
     @Override
     public void drawImage(Graphics g) {  // graphic object that you mean in the memory
         checkVisible();
-
+        Graphics2D g2d = (Graphics2D) g;
         if(this.isVisible){
             AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
             rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
-            Graphics2D g2d = (Graphics2D) g;
+
             g2d.drawImage(this.img, rotation, null);
 
             this.ammo.forEach(bullet -> bullet.drawImage(g2d));
@@ -305,6 +308,9 @@ public class Tank extends GameObject implements Moveable{
                 this.powerpick.drawImage(g2d);
             }
 
+        }
+        if(bulletShoot!=null){
+            bulletShoot.drawImage(g2d);
         }
 
 

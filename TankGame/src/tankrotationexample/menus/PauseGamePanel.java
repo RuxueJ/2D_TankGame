@@ -9,7 +9,7 @@ import java.awt.*;
 public class PauseGamePanel extends Screen{
     public PauseGamePanel(Launcher lf) {
         super(lf);
-        this.menuBackground = ResourceManager.getSprite("menu");
+        this.bgImage = ResourceManager.getSprite("menu");
 
         JButton resume = new JButton("Resume");
 

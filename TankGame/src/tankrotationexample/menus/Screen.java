@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 abstract public class Screen extends JPanel {
-    public BufferedImage menuBackground;
+    public BufferedImage bgImage;
     public final Launcher lf;
 
     public Screen(Launcher lf) {
